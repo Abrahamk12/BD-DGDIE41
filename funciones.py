@@ -1,5 +1,5 @@
 import mysql.connector
-
+#region conexion
 def conectarse()->None:
     return mysql.connector.connect(
         host='127.0.0.1',
@@ -7,7 +7,25 @@ def conectarse()->None:
         password='Contraseña@123',
         database='dgie41'
     )
+#endregion
 
+#region creacion Tablas dinamicas
+def crear_tabla(nombre_tabla, **columnas):
+    try:
+        conexion = conectarse()
+        cursor = conexion.cursor()
+        columnas_sql = ", ".join([f"{columna} {tipo}" for columna, tipo in columnas.items()])
+        consulta = f"CREATE TABLE IF NOT EXISTS {nombre_tabla} ({columnas_sql})"
+        cursor.execute(consulta)
+        print(f"Tabla '{nombre_tabla}' creada exitosamente.")
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+    except mysql.connector.Error as error:
+        print(f"Error al crear la tabla: {error}")
+#endregion
+
+#region creacion
 def crearTabla():
     conexion = conectarse()
     with conexion.cursor() as cursor:
@@ -15,7 +33,9 @@ def crearTabla():
         "nombre VARCHAR(100), descripcion TEXT);")
     conexion.commit()
     conexion.close()
+#endregion
 
+#region obtener Datos
 def guardarUsuario(nombre:str, descripcion:str):
     conexion = conectarse()
     with conexion.cursor() as cursor:
@@ -45,3 +65,4 @@ def getUsuario(nombre:str)->str:
         us = usuario.__getitem__(0)
     conexion.close()
     return us
+#endregion

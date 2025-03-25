@@ -8,7 +8,6 @@ def conectarse()->None:
         database='dgie41'
     )
 #endregion
-
 #region creacion Tablas dinamicas
 def crear_tabla(nombre_tabla, **columnas):
     try:
@@ -65,4 +64,14 @@ def getUsuario(nombre:str)->str:
         us = usuario.__getitem__(0)
     conexion.close()
     return us
+
+def getPassword(nombre:str)->str:
+    conexion = conectarse()
+    with conexion.cursor() as cursor:
+        password = cursor.execute("SELECT contraseña FROM usuarios WHERE usuario = " + "'" + nombre + "'")
+        password = cursor.fetchone()
+    conexion.close() 
+    for i in range(len(password)):
+        pas = password.__getitem__(i)
+    return pas
 #endregion

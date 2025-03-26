@@ -74,4 +74,11 @@ def getPassword(nombre:str)->str:
     for i in range(len(password)):
         pas = password.__getitem__(i)
     return pas
+
+def registrarUsuario(usuario: str, password:str)->None:
+    conexion = conectarse()
+    with conexion.cursor() as cursor:
+        cursor.execute("INSERT INTO usuarios(usuario, contraseña) VALUES(%s, %s)", (usuario, password))
+    conexion.commit()
+    conexion.close()
 #endregion

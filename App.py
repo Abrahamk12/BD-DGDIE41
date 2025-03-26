@@ -22,8 +22,8 @@ def index():
     if request.method == "GET":
         return render_template("index.html")
     
-@app.route("/login")
-@app.route("/login")
+@app.route("/login", methods = ["GET", "POST"])
+@app.route("/login", methods = ["GET", "POST"])
 def login():
     if request.method == "GET":
         msg = ""
@@ -51,6 +51,28 @@ def login():
                             return redirect(ruta)
                         else:
                             return redirect('/')
+                    else:
+                        msg = f"La contraseña del {usuario} no corresponde"
+                        return render_template("/login.html", mensaje = msg)
+
+@app.route("/registro", methods = ["GET", "POST"])
+@app.route("/registro", methods = ["GET", "POST"])  
+def registro():
+    if request.method == "GET":
+        return render_template("registro.html")
+    else:
+        if request.method == "POST":
+            valor = request.form['Enviar']
+            if valor == 'Enviar':
+                usuario = request.form['usuario']
+                password = request.form['password']
+                password = sha256_crypt.hash(password)
+                c_usuario = comprobarUsuario()
+                if usuario not in c_usuario:
+                    registrarUsuario(usuario, password)
+                return redirect('/login')
+            return render_template('/registro', mensaje = "Error en el registro")
+
 #endregion
 
 #region inciar programa

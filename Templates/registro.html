@@ -16,17 +16,16 @@
           <a class="navbar-brand" href="/"><img src="/static/image/Captura de pantalla 2024-11-13 175654.png" alt="" width="30" height="24" class="d-inline-block align-text-top"></a>     
         </div>
     </nav>
-    <form action="" method="POST" class="form-box animate__animated animate__fadeInUp" >
+    <form action="/registro" method="POST" class="form-box animate__animated animate__fadeInUp">
         <h1 class="form-title">Registro de nuevo Usuario</h1>
-        <input type="text" placeholder="Usuario" name="usuario">
-        <input type="password" placeholder="password" name="password">
-        <button method="POST" type="submit" name="enviar" value="Enviar">
-            Registrarse
-        </button>
+        <input type="text" placeholder="Usuario" name="usuario"> <!-- 'usuario' -->
+        <input type="password" placeholder="password" name="password"> <!-- 'password' -->
+        <button type="submit" name="enviar" value="Enviar">Registrarse</button> <!-- 'enviar' -->
         <div>
             <a href="/login">Iniciar sesion</a>
         </div>
     </form>
+    
     
 </body>
 </html>

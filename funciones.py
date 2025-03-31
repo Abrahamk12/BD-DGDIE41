@@ -8,6 +8,7 @@ def conectarse()->None:
         database='dgie41'
     )
 #endregion
+
 #region creacion Tablas dinamicas
 def crear_tabla(nombre_tabla, **columnas):
     try:
@@ -24,61 +25,176 @@ def crear_tabla(nombre_tabla, **columnas):
         print(f"Error al crear la tabla: {error}")
 #endregion
 
-#region creacion
-def crearTabla():
-    conexion = conectarse()
-    with conexion.cursor() as cursor:
-        cursor.execute("CREATE TABLE prueba(id_prueba INT AUTO_INCREMENT PRIMARY KEY, "
-        "nombre VARCHAR(100), descripcion TEXT);")
-    conexion.commit()
-    conexion.close()
+#region insertar Datos
+def guardarDatos(nombre_tabla, datos, columnas)->None:
+    try:
+        # Conexión a la base de datos
+        conexion = conectarse()
+        cursor = conexion.cursor()
+
+        # Construcción de las columnas y valores
+        columnas_sql = ", ".join(columnas.keys())
+        valores_sql = ", ".join(["%s"] * len(columnas))  # Marcadores de posición para los valores
+        consulta = f"INSERT INTO {nombre_tabla} ({columnas_sql}) VALUES ({valores_sql});"
+        
+        # Ejecución de la consulta
+        cursor.execute(consulta, tuple(datos.values()))  # Pasa los valores como una tupla
+        
+        # Confirmar los cambios en la base de datos
+        conexion.commit()
+
+        print("Datos guardados exitosamente.")
+
+        # Cierre de la conexión
+        cursor.close()
+        conexion.close()
+
+    except mysql.connector.Error as error:
+        print(f"Error al guardar los datos: {error}")
+
+
+def registrarUsuario(nombre_tabla, datos, columnas)->None:
+    try:
+        # Conexión a la base de datos
+        conexion = conectarse()
+        cursor = conexion.cursor()
+
+        # Construcción de las columnas y valores
+        columnas_sql = ", ".join(columnas.keys())
+        valores_sql = ", ".join(["%s"] * len(columnas))  # Marcadores de posición para los valores
+        consulta = f"INSERT INTO {nombre_tabla} ({columnas_sql}) VALUES ({valores_sql});"
+        
+        # Ejecución de la consulta
+        cursor.execute(consulta, tuple(datos.values()))  # Pasa los valores como una tupla
+        
+        # Confirmar los cambios en la base de datos
+        conexion.commit()
+
+        print("Datos guardados exitosamente.")
+
+        # Cierre de la conexión
+        cursor.close()
+        conexion.close()
+
+    except mysql.connector.Error as error:
+        print(f"Error al guardar los datos: {error}")
 #endregion
 
 #region obtener Datos
-def guardarUsuario(nombre:str, descripcion:str):
-    conexion = conectarse()
-    with conexion.cursor() as cursor:
-        cursor.execute("INSERT INTO prueba(nombre, descripcion) VALUES(%s, %s)"),
-        (nombre, descripcion)
-    conexion.commit()
-    conexion.close()
+def obtenerDatos(nombre_tabla, **columnas)->list:
+    try:
+        # Conexión a la base de datos
+        conexion = conectarse()
+        cursor = conexion.cursor()
 
-def comprobarUsuario()->list:
-    c_us = []
-    conexion = conectarse()
-    with conexion.cursor() as cursor:
-        cursor.execute("SELECT nombre FROM prueba")
-        c_usuario = cursor.fetchall()
-    conexion.close()
-    for i in range(len(c_usuario)):
-        us = c_usuario.__getitem__(i)
-        c_us.append(us.__getitem__(0))
-    return c_us
+        # Construcción de la consulta SQL
+        columnas_sql = ", ".join(columnas.keys())
+        consulta = f"SELECT {columnas_sql} FROM {nombre_tabla};"
+        
+        # Ejecución de la consulta
+        cursor.execute(consulta)
+        
+        # Obtención de los datos
+        datos = cursor.fetchall()  # Recupera todas las filas del resultado
+        for fila in datos:
+            print(fila)  # Aquí puedes procesar o guardar los datos como desees
 
-def getUsuario(nombre:str)->str:
-    usuario = ""
-    conexion = conectarse()
-    with conexion.cursor() as cursor:
-        cursor.execute("SELECT nombre FROM prueba WHERE usuario = " + "'" + nombre + "'")
-        usuario = cursor.fetchone()
-        us = usuario.__getitem__(0)
-    conexion.close()
-    return us
+        # Cierre de la conexión
+        cursor.close()
+        conexion.close()
+    except mysql.connector.Error as error:
+        print(f"Datos no encontrados: {error}")
 
-def getPassword(nombre:str)->str:
-    conexion = conectarse()
-    with conexion.cursor() as cursor:
-        password = cursor.execute("SELECT contraseña FROM usuarios WHERE usuario = " + "'" + nombre + "'")
-        password = cursor.fetchone()
-    conexion.close() 
-    for i in range(len(password)):
-        pas = password.__getitem__(i)
-    return pas
+def obtenerDatosWhere(nombre_tabla, dato, referencia, **columnas)->list:
+    try:
+        # Conexión a la base de datos
+        conexion = conectarse()
+        cursor = conexion.cursor()
 
-def registrarUsuario(usuario: str, password:str)->None:
-    conexion = conectarse()
-    with conexion.cursor() as cursor:
-        cursor.execute("INSERT INTO usuarios(usuario, contraseña) VALUES(%s, %s)", (usuario, password))
-    conexion.commit()
-    conexion.close()
+        # Construcción de la consulta SQL
+        columnas_sql = ", ".join(columnas.keys())
+        consulta = f"SELECT {columnas_sql} FROM {nombre_tabla} WHERE {referencia} = {dato};"
+        
+        # Ejecución de la consulta
+        cursor.execute(consulta)
+        
+        # Obtención de los datos
+        datos = cursor.fetchall()  # Recupera todas las filas del resultado
+        for fila in datos:
+            print(fila)  # Aquí puedes procesar o guardar los datos como desees
+
+        # Cierre de la conexión
+        cursor.close()
+        conexion.close()
+    except mysql.connector.Error as error:
+        print(f"Datos no encontrados: {error}")
+
+def obtenerUsuarios(nombre_tabla, referencia)->list:
+    try:
+        # Conexión a la base de datos
+        conexion = conectarse()
+        cursor = conexion.cursor()
+
+        # Construcción de la consulta SQL
+        consulta = f"SELECT {referencia} FROM {nombre_tabla};"
+        
+        # Ejecución de la consulta
+        cursor.execute(consulta)
+        
+        # Obtención de los datos
+        datos = cursor.fetchall()  # Recupera todas las filas del resultado
+        for fila in datos:
+            print(fila)  # Aquí puedes procesar o guardar los datos como desees
+
+        # Cierre de la conexión
+        cursor.close()
+        conexion.close()
+    except mysql.connector.Error as error:
+        print(f"Datos no encontrados: {error}")
+
+def getPassword(nombre_tabla, referencia, dato)->list:
+    try:
+        # Conexión a la base de datos
+        conexion = conectarse()
+        cursor = conexion.cursor()
+
+        # Construcción de la consulta SQL
+        consulta = f"SELECT {referencia} FROM {nombre_tabla} WHERE {referencia} = {dato};"
+        
+        # Ejecución de la consulta
+        cursor.execute(consulta)
+        
+        # Obtención de los datos
+        datos = cursor.fetchall()  # Recupera todas las filas del resultado
+        for fila in datos:
+            print(fila)  # Aquí puedes procesar o guardar los datos como desees
+
+        # Cierre de la conexión
+        cursor.close()
+        conexion.close()
+    except mysql.connector.Error as error:
+        print(f"Datos no encontrados: {error}")
+
+def comprobarUsuario(nombre_tabla, dato, referencia)->list:
+    try:
+        # Conexión a la base de datos
+        conexion = conectarse()
+        cursor = conexion.cursor()
+
+        # Construcción de la consulta SQL
+        consulta = f"SELECT {referencia} FROM {nombre_tabla} WHERE {referencia} = {dato};"
+        
+        # Ejecución de la consulta
+        cursor.execute(consulta)
+        
+        # Obtención de los datos
+        datos = cursor.fetchone()  # Recupera todas las filas del resultado
+        for fila in datos:
+            print(fila)  # Aquí puedes procesar o guardar los datos como desees
+
+        # Cierre de la conexión
+        cursor.close()
+        conexion.close()
+    except mysql.connector.Error as error:
+        print(f"Datos no encontrados: {error}")
 #endregion
